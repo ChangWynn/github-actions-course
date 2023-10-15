@@ -57,6 +57,8 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    outputs: # JOB OUTPUT
+      script-file: ${{ steps.publish.outputs.script-file }} # steps.<id>.outputs.variableName. variableName has to match the one below
     steps:
       - name: Retrieve code
         uses: actions/checkout@v3
@@ -72,8 +74,12 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Publish JS filename # JOB OUTPUT STEP
+        id: publish # required
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # <- this one
+
       - name: Upload build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3 # UPLOAD ARTIFACT
         with:
           name: dist-files
           path: |
@@ -96,9 +102,11 @@ jobs:
         run: npm ci
 
       - name: Downloading dependencies
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3 # DOWNLOAD ARTIFACT
         with:
           name: dist-files
 
+      - name: Output filename
+        run: echo "${{ needs.build.outputs.script-file }}" # this script-file correspond to the key script file in the build job
       - name: Staging project
         run: echo "deploying..."
