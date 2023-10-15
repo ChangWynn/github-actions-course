@@ -1,13 +1,23 @@
 name: CI workflow
 
-on: push # can take an array if multiple events trigger are required
+on: push
+# can take an array if multiple events trigger are required
+# activity types and event filters can be added to be more specific about the event
+# if mulitple events but one doesnt have types and filters, colon are still required
+
+# on:
+#   pull_request:
+#     types: [opened, edited]
+#   workflow_dispatch:
 
 jobs:
   info:
     runs-on: ubuntu-latest
     steps:
       - name: Output Github Context
-        run: echo "${{ github }}" # context: predefined variables
+        run: echo "${{ toJson(github) }}"
+        # context: various metadata about the workflow and actions.
+        # will print Object if toJson is not called
 
   test:
     runs-on: ubuntu-latest
