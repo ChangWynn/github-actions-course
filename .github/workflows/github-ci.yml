@@ -76,7 +76,7 @@ jobs:
 
       - name: Publish JS filename # JOB OUTPUT STEP
         id: publish # required
-        run: find dist/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # <- this one
+        run: find public/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # <- this one
 
       - name: Upload build
         uses: actions/upload-artifact@v3 # UPLOAD ARTIFACT
