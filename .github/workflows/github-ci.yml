@@ -76,7 +76,7 @@ jobs:
 
       - name: Publish JS filename # JOB OUTPUT STEP
         id: publish # required
-        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # <- this one
+        run: find dist/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # <- this one
 
       - name: Upload build
         uses: actions/upload-artifact@v3 # UPLOAD ARTIFACT
@@ -108,5 +108,6 @@ jobs:
 
       - name: Output filename
         run: echo "${{ needs.build.outputs.script-file }}" # this script-file correspond to the key script file in the build job
+
       - name: Staging project
         run: echo "deploying..."
