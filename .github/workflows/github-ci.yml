@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Output Github Context
-        run: echo "${{ toJson(github) }}" # context: predefined variables
+        run: echo "${{ github }}" # context: predefined variables
 
   test:
     runs-on: ubuntu-latest
