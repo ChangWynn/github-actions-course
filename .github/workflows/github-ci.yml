@@ -1,14 +1,32 @@
 name: CI workflow
 
-on: push
+on:
+  push:
+    branches:
+      - main
 # can take an array if multiple events trigger are required
 # activity types and event filters can be added to be more specific about the event
 # if mulitple events but one doesnt have types and filters, colon are still required
 
+# ACTIVITY TYPES
 # on:
 #   pull_request:
 #     types: [opened, edited]
 #   workflow_dispatch:
+
+# FILTERS
+# on:
+#   pull_request:
+#     types: [opened, edited]
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+#       - 'dev-*' -> branches starting with dev
+#       - 'feature/**' -> allow more slashes
+#     paths: -> if a push include changes in a specific path
+#     paths-ignore:
+#       - '.github/workflows/*'
 
 jobs:
   info:
@@ -36,8 +54,8 @@ jobs:
       - name: Run tests
         run: npm test
 
-  deploy:
-    needs: test # specify order. can take an array if multiple jobs need to be successfull first
+  build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Retrieve code
@@ -53,3 +71,29 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: |
+            dist
+            public
+
+  deploy-to-stage:
+    needs: build # specify order. can take an array if multiple jobs need to be successfull first
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve code
+        uses: actions/checkout@v3
+
+      - name: Install nodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install depedencies
+        run: npm ci
+
+      - name: Staging project
+        run: echo "deploying..."
